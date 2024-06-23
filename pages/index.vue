@@ -1,7 +1,3 @@
-<script setup>
-
-</script>
-
 <template>
     <section class="bg-white rounded-b">
         <div class="flex flex-col px-8 mx-auto space-y-3 max-w-7xl xl:px-12">
@@ -20,5 +16,12 @@
                 </div>
             </div>
         </div>
+        <PageComponentsModalNewClient v-if="showModal"/>
     </section>
 </template>
+
+<script setup lang="ts">
+    import { storeToRefs } from 'pinia'; // import storeToRefs helper hook from pinia
+    import { useAppStore } from '@/store/app'
+    const { showModal } = storeToRefs(useAppStore());    
+</script>

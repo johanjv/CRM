@@ -1,7 +1,6 @@
 <script setup>
-import { useAppStore } from '@/store/app'
-import { useAuthStore } from '@/store/auth'
-const { title } = useAppStore()
+    import { useAppStore } from '@/store/app';
+    const { title } = useAppStore();    
 </script>
 
 <template>

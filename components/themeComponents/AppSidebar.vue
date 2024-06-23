@@ -1,7 +1,6 @@
 <template>
-
-<div x-data="{ sidebarOpen: false }" class="flex h-screen bg-purple-300">
-    <div :class="sidebarOpen ? 'block' : 'hidden'" @click="sidebarOpen = false" class="fixed z-20 inset-0 bg-black opacity-50 transition-opacity lg:hidden"></div>
+    <div x-data="{ sidebarOpen: false }" class="flex h-screen bg-purple-300">
+        <div :class="sidebarOpen ? 'block' : 'hidden'" @click="sidebarOpen = false" class="fixed z-20 inset-0 bg-black opacity-50 transition-opacity lg:hidden"></div>
       
       <header :class="sidebarOpen == false ? 'block align-top py-2' : ''">
         <div class="flex items-center">
@@ -41,7 +40,7 @@
                             <span class="flex font-medium text-sm text-gray-400 px-4 my-4 uppercase">Projects</span>
                         </li>
                         <li class="my-px">
-                            <NuxtLink to="/new-client"
+                            <button @click="showModal"
                                 class="flex flex-row items-center h-12 px-4 rounded-lg text-gray-600 hover:bg-gray-100">
                                 <span class="flex items-center justify-center text-lg text-green-400">
                                     <svg fill="none"
@@ -55,7 +54,7 @@
                                     </svg>
                                 </span>
                                 <span class="ml-3">New Client</span>
-                            </NuxtLink>
+                            </button>
                         </li>
                         <li class="my-px">
                             <a href="#"
@@ -191,25 +190,30 @@
         
       </div>
   </div>
-    <!--  -->
-
 </template>
 
 <script lang="ts" setup>
   import { storeToRefs } from 'pinia'; // import storeToRefs helper hook from pinia
   import { useAuthStore } from '~/store/auth'; // import the auth store we just created
+  import { useAppStore } from '~/store/app'; // import the auth store we just created
+
   const sidebarOpen = ref(false)
   const loadLogout = ref(false);
   const router = useRouter();
 
   const { logUserOut } = useAuthStore(); // use authenticateUser action from  auth store
   const { authenticated } = storeToRefs(useAuthStore()); // make authenticated state reactive with storeToRefs
+  const { changeVisibilityModal } = useAppStore(); // make authenticated state reactive with storeToRefs
 
   const logout = () => {
     loadLogout.value = true;
     logUserOut();
     router.push('/auth');
     loadLogout.value = false;
+  };
+
+  const showModal = async () => {    
+    await changeVisibilityModal();
   };
 </script>
 
