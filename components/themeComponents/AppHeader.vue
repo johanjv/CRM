@@ -5,7 +5,7 @@
 
 <template>
     <!-- component -->
-    <nav class=" bg-white w-full flex relative justify-between items-center mx-auto px-8 h-20 rounded-t">
+    <nav class=" bg-white w-full flex relative justify-between items-center mx-auto px-8 h-20 rounded">
         <!-- logo -->
         <div class="inline-flex">
             <a class="_o6689fn" href="/">

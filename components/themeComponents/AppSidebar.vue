@@ -33,14 +33,14 @@
                                     </svg>
                                 </span>
                                 <span class="ml-3">Dashboard</span>
-                                <span class="flex items-center justify-center text-sm text-gray-500 font-semibold bg-gray-200 h-6 px-2 rounded-full ml-auto">3</span>
+                                <!-- <span class="flex items-center justify-center text-sm text-gray-500 font-semibold bg-gray-200 h-6 px-2 rounded-full ml-auto">3</span> -->
                             </NuxtLink>
                         </li>
                         <li class="my-px">
                             <span class="flex font-medium text-sm text-gray-400 px-4 my-4 uppercase">Projects</span>
                         </li>
                         <li class="my-px">
-                            <button @click="showModal"
+                            <button @click="showModal" v-if="$route.path == '/'"
                                 class="flex flex-row items-center h-12 px-4 rounded-lg text-gray-600 hover:bg-gray-100">
                                 <span class="flex items-center justify-center text-lg text-green-400">
                                     <svg fill="none"
@@ -57,7 +57,7 @@
                             </button>
                         </li>
                         <li class="my-px">
-                            <a href="#"
+                            <NuxtLink to="manager"
                                 class="flex flex-row items-center h-12 px-4 rounded-lg text-gray-600 hover:bg-gray-100">
                                 <span class="flex items-center justify-center text-lg text-gray-400">
                                     <svg fill="none"
@@ -71,7 +71,7 @@
                                     </svg>
                                 </span>
                                 <span class="ml-3">Manager</span>
-                            </a>
+                            </NuxtLink>
                         </li>
                         <li class="my-px">
                             <a href="#"

@@ -84,17 +84,21 @@
                                         placeholder="Comments">
                                 </div>
                             </div>
-                            <div class="pt-4 flex items-center space-x-4">
-                                <button @click="showModal"
-                                    class="flex justify-center items-center w-full bg-red-400 hover:bg-red-700 text-white px-4 py-3 rounded-md focus:outline-none">
-                                    <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg> Go Back
-                                </button>
-                                <button @click="createNewProspect"
-                                    class="bg-purple-400 hover:bg-purple-600 flex justify-center items-center w-full text-white px-4 py-3 rounded-md focus:outline-none">Register</button>
+                            <div class="pt-4 flex items-center space-x-4  justify-center">
+                                <template v-if="!loadSaveProspects">
+                                    <button @click="showModal"
+                                        class="flex justify-center items-center w-full bg-red-400 hover:bg-red-700 text-white px-4 py-3 rounded-md focus:outline-none">
+                                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg> Go Back
+                                    </button>
+                                    <button @click="createNewProspect" class="bg-purple-400 hover:bg-purple-600 flex justify-center items-center w-full text-white px-4 py-3 rounded-md focus:outline-none">
+                                        Register
+                                    </button>
+                                </template>
+                                <ThemeComponentsLoadingPage v-else :disabled="!loadSaveProspects" />
                             </div>
                         </div>
                     </div>
@@ -107,30 +111,44 @@
 <script lang="ts" setup>
   import type { ProspectInterface } from '~/interfaces/ProspectInterface';
   import { useAppStore } from '~/store/app'; // import the auth store we just created
-  
+  import { defineEmits } from 'vue';
+
+  const emit = defineEmits(['refresh-prospects']);
+
   const { changeVisibilityModal } = useAppStore(); // make authenticated state reactive with storeToRefs
+
+  const loadSaveProspects = ref(false);
   const prospect: ProspectInterface = reactive({
     fullName: '',
     company: '',
     email: '',
     cellPhone: '',
     phone: '',
-    country: {},
-    entryDate: new Date(),
+    country: '',
+    entryDate: new Date().toISOString(),
     comments: ''
-  }) 
+  })
+  
 
   const showModal = async () => {    
     await changeVisibilityModal();
   }
 
   const createNewProspect = async () => {
-    console.log(prospect);
+    loadSaveProspects.value = true;
+    const { data, error: fetchError } = await useAPI('/prospects', {
+      method: 'POST',
+      body: JSON.stringify(prospect),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      default: () => ({}),
+    });
+    loadSaveProspects.value = false;
+    showModal();
+    emit('refresh-prospects');
+
   }
-
-
-
-
 </script>
 
 <style scoped></style>

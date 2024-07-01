@@ -1,27 +1,102 @@
 <template>
-    <section class="bg-white rounded-b">
-        <div class="flex flex-col px-8 mx-auto space-y-3 max-w-7xl xl:px-12">
-            <div class="relative">
-                <h2 class="w-full text-3xl font-bold text-center sm:text-4xl md:text-5xl"> Level Up Your Designs</h2>
-                <p class="w-full py-8 mx-auto -mt-2 text-lg text-center text-gray-700 intro sm:max-w-3xl">Add some nice touches to your interface with our latest designs, components, and templates. We've crafted a beautiful user experience that your visitors will love. </p>
+    <section class=" rounded-b">
+        <div class="grid grid-cols-2 gap-5 py-2">
+            <div class="bg-white rounded justify-center">
+                <ClientOnly>
+                    <apexchart
+                        v-if="!loadProspects"
+                        :key="series"
+                        height="400"
+                        width="100%"
+                        :options="options"
+                        :series="series"
+                    ></apexchart>
+                    <ThemeComponentsLoadingPage v-else />
+                </ClientOnly>
             </div>
-            <div class="flex flex-col animated fadeIn sm:flex-row">
-                <div class="flex items-center mb-8 sm:w-1/2 md:w-5/12 sm:order-last">
-                    <img class="rounded-lg shadow-xl" src="https://cdn.devdojo.com/images/december2020/dashboard-011.png" alt="">
-                </div>
-                <div class="flex flex-col justify-center mt-5 mb-8 md:mt-0 sm:w-1/2 md:w-7/12 sm:pr-16">
-                    <p class="mb-2 text-sm font-semibold leading-none text-left text-indigo-600 uppercase">Drag-n-drop design</p>
-                    <h3 class="mt-2 text-2xl sm:text-left md:text-4xl">Design Made Easy</h3>
-                    <p class="mt-5 text-lg text-gray-700 text md:text-left">Crafting your user experience has never been easier, with our intuitive drag'n drop interface you will be creating beatiful designs in no time.</p>
-                </div>
+            <div class="bg-white rounded justify-center">
+                <ClientOnly>
+                    <apexchart
+                        v-if="!loadProspects"
+                        :key="series"
+                        height="400"
+                        width="100%"
+                        :options="options"
+                        :series="series"
+                    ></apexchart>
+                    <ThemeComponentsLoadingPage v-else />
+                </ClientOnly>
             </div>
         </div>
-        <PageComponentsModalNewClient v-if="showModal"/>
+        <PageComponentsModalNewClient v-if="showModal" @refresh-prospects="getProspects"/>
     </section>
 </template>
 
 <script setup lang="ts">
+    import { ref, onMounted } from 'vue'
     import { storeToRefs } from 'pinia'; // import storeToRefs helper hook from pinia
     import { useAppStore } from '@/store/app'
-    const { showModal } = storeToRefs(useAppStore());    
+import type { ProspectInterface } from '~/interfaces/ProspectInterface';
+
+    onMounted(async () => {
+        await nextTick();
+        await getProspects();
+    });
+
+    const { showModal } = storeToRefs(useAppStore());   
+    const loadProspects = ref(false);
+
+    const options = ref({
+        chart: {
+            type: "bar",
+        },
+        plotOptions: {
+            bar: {
+                borderRadius: 10,
+                borderRadiusApplication: "around",
+            },
+        },
+        xaxis: {
+            categories: ['New', 'Proposal', 'Negotiation', 'Need Analysis', 'Closed Won', 'Closed Lost']
+        },
+        title: {
+          text: 'Opportunity count by Stage',
+          floating: false,
+          offsetY: 10,
+          align: 'center',
+          style: {
+            color: '#444'
+          }
+        }
+    });
+
+    const series = ref([
+        {
+            name: "amount",
+            data: [],
+        },
+    ]);
+
+    const getProspects = async () => {
+
+        loadProspects.value = true;
+        const { data, error: fetchError } = await useAPI('/prospects', {
+            method: 'get',
+            default: () => ({}),
+        });
+
+        let { Prospects }: any = data.value;
+        
+        let countNews           = Prospects.filter((prospect: ProspectInterface) => prospect.stage == '66816853c5111375d1a5d8de')
+        let countNegotiation    = Prospects.filter((prospect: ProspectInterface) => prospect.stage == '66816853c5111375d1a5d8e1')
+        let countProposal       = Prospects.filter((prospect: ProspectInterface) => prospect.stage == '66816853c5111375d1a5d8e0')
+        let countNeedAnalysis   = Prospects.filter((prospect: ProspectInterface) => prospect.stage == '66816853c5111375d1a5d8e2')
+        let countCloseWon       = Prospects.filter((prospect: ProspectInterface) => prospect.stage == '66816853c5111375d1a5d8e3')
+        let countCloseLost      = Prospects.filter((prospect: ProspectInterface) => prospect.stage == '66816853c5111375d1a5d8e4')
+        
+        series.value[0].data = [countNews.length, countNegotiation.length, countProposal.length, countNeedAnalysis.length, countCloseWon.length, countCloseLost.length]
+        
+        loadProspects.value = false;
+    }
+
 </script>

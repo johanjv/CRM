@@ -7,6 +7,7 @@ export interface ProspectInterface {
     cellPhone: String,
     phone: String,
     country: Object,
-    entryDate: Date,
-    comments: String
+    entryDate: String,
+    comments: String,
+    stage?: String
 }
